@@ -3,7 +3,6 @@ package org.model;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -46,7 +45,7 @@ public class UDIModel {
 			ArrayList<String> friends = friendship.get(user);
 			ArrayList<String> followers = followersMap.get(user);
 			
-			UserObject uObj = new UserObject(10.0, followers, friends, home);
+			UserObject uObj = new UserObject(10000.0, followers, friends, home);
 			
 			uMap.put(user, uObj);
 		}

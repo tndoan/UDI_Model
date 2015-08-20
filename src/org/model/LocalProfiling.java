@@ -34,7 +34,7 @@ public class LocalProfiling extends UDIModel{
 		
 		// if user does not have home, we need to learn it
 		ArrayList<String> friends = uObj.getFriends();
-		double llh = 0.0;
+//		double llh = 0.0;
 		
 		// update influence scope of friend
 		updateFriends(friends);
@@ -221,7 +221,7 @@ public class LocalProfiling extends UDIModel{
 			if (fObj.getHome() == null)
 				continue; // we dont care
 			
-			result += -2.0 * Math.log(uScope) - Utils.calSqDistance(uObj.getHome(), fObj.getHome()) / (2.0 * uScope);
+			result += - Math.log(uScope) - Utils.calSqDistance(uObj.getHome(), fObj.getHome()) / (2.0 * uScope);
 		}
 		
 		ArrayList<String> friends = uObj.getFriends();
@@ -230,7 +230,7 @@ public class LocalProfiling extends UDIModel{
 			if (fObj.getHome() == null)
 				continue;
 			double scope = fObj.getScope();
-			result += -2.0 * Math.log(scope) - Utils.calSqDistance(fObj.getHome(), uObj.getHome()) / (2.0 * scope);
+			result += - Math.log(scope) - Utils.calSqDistance(fObj.getHome(), uObj.getHome()) / (2.0 * scope);
 		}
 		
 		ArrayList<String> venues = uObj.getListOfVenues();
@@ -238,7 +238,7 @@ public class LocalProfiling extends UDIModel{
 			VenueObject vObj = vMap.get(venue);
 			double scope = vObj.getScope();
 			double w = (double) vObj.getNumberOfTweet(userId);
-			double v = -2.0 * Math.log(scope) - Utils.calSqDistance(vObj.getLocation(), uObj.getHome()) / (2.0 * scope * scope);
+			double v = - Math.log(scope) - Utils.calSqDistance(vObj.getLocation(), uObj.getHome()) / (2.0 * scope * scope);
 			result += w * v;
 		}
 		
