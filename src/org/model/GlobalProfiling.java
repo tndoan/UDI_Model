@@ -17,7 +17,7 @@ public class GlobalProfiling extends UDIModel{
 		super(uFile, fFile, tFile, vFile);
 	}
 	
-	public void learnParameters(){
+	public void learnParameters() {
 		// set of all users who do not have home location
 		ArrayList<String> unknownHomeUsers = new ArrayList<>();
 		
@@ -28,6 +28,8 @@ public class GlobalProfiling extends UDIModel{
 			if(uObj.getHome() == null)
 				unknownHomeUsers.add(user);
 		}
+		
+		double llh = 0.0;
 		
 		// key is venue id, value is current predicted home location of user
 		HashMap<String, PointObject> predictedLoc = new HashMap<>();
@@ -72,27 +74,20 @@ public class GlobalProfiling extends UDIModel{
 					conv = true;
 			}
 			
-			double distance = 0.0;
 			// update home location of each unknown-home users
 			for (String user : unknownHomeUsers){
 				UserObject uObj = uMap.get(user);
-				PointObject predictedPoint = predictedLoc.get(user);
-				PointObject currentHome = uObj.getHome();
-				distance += Utils.calSqDistance(predictedPoint, currentHome);
 				uObj.updateHome(predictedLoc.get(user));
 			}
 			
-			// check convergence. terminate if the distance is stable
-			if (distance < 10.0){
+			// check convergence. terminate if the loglikelihood is stable			
+			System.out.println("LLH:" + calculateLLH());
+			double new_llh = calculateLLH();
+			if (Math.abs(new_llh - llh) / Math.abs(llh) < 0.01){
 				convergence = true;
+			} else {
+				llh = new_llh;
 			}
-//			double new_llh = calculateLLH();
-//			if (Math.abs(new_llh - llh) < 0.01){
-//				convergence = true;
-//			} else {
-//				System.out.println(llh + ":" + new_llh);
-//				llh = new_llh;
-//			}
 			
 		}
 	}
@@ -101,7 +96,6 @@ public class GlobalProfiling extends UDIModel{
 	 * calculate log likelihood of whole graph
 	 * @return	log likelihood
 	 */
-	@SuppressWarnings("unused")
 	private double calculateLLH(){
 		double llh = 0.0;
 		
@@ -130,7 +124,6 @@ public class GlobalProfiling extends UDIModel{
 					llh_comp += -Math.log(uScope) - Utils.calSqDistance(home, fObj.getHome()) / (2.0 * uScope);
 				}
 			}
-			System.out.println(llh_comp);
 			llh += llh_comp;
 		}
 		System.out.println("===============");
@@ -151,7 +144,7 @@ public class GlobalProfiling extends UDIModel{
 		// for each of his followers
 		ArrayList<String> followers = uObj.getFollowers();
 		if (followers != null) {
-			// we do not care abou the case of non-followers user
+			// we do not care about the case of non-followers user
 			for (String follower : followers) {
 				UserObject fObj = uMap.get(follower);
 				
@@ -166,7 +159,7 @@ public class GlobalProfiling extends UDIModel{
 		// for each of his friend
 		ArrayList<String> friends = uObj.getFriends();
 		if (friends != null){
-			// we do not care about case of non-friend user
+			// we do not care about case of non-friend users
 			for (String friend : friends){
 				UserObject fObj = uMap.get(friend);
 				
@@ -215,13 +208,13 @@ public class GlobalProfiling extends UDIModel{
 			for (String user : users){
 				double numTweets = (double)vObj.getNumberOfTweet(user);
 				numerator += numTweets * Utils.calSqDistance(loc, uMap.get(user).getHome());
-				//TODO it is a non-standard way to overcome
-				if (numerator == 0.0)
-					numerator = 1e-6;
 				denominator += numTweets;
 			}
 			
 			denominator *= (double) 2.0;
+			
+//			if (numerator == 0.0)
+//				numerator = 1e-10;
 			
 			vObj.updateScope(numerator / denominator);
 		}
