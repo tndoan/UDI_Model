@@ -16,9 +16,24 @@ import org.utils.Utils;
 
 public class UDIModel {
 
+	/**
+	 * key is venue id, value is venue object
+	 */
 	protected HashMap<String, VenueObject> vMap;
+	
+	/**
+	 * key is user id, value is user object
+	 */
 	protected HashMap<String, UserObject> uMap;
 	
+	/**
+	 * 
+	 * @param uFile
+	 * @param fFile
+	 * @param tFile
+	 * @param vFile
+	 * @throws IOException
+	 */
 	public UDIModel(String uFile, String fFile, String tFile, String vFile) throws IOException {
 		HashMap<String, PointObject> userProfiles = ReadFiles.readProfile(uFile);
 		HashMap<String, ArrayList<String>> friendship = ReadFiles.readFriendship(fFile);
@@ -65,7 +80,7 @@ public class UDIModel {
 				u.addVenue(venue);
 			}
 			
-			VenueObject vo = new VenueObject(0, map, vLoc);
+			VenueObject vo = new VenueObject(1.0, map, vLoc);
 			vMap.put(venue, vo);
 		}
 	}
@@ -78,6 +93,24 @@ public class UDIModel {
 	public PointObject getHome(String userId){
 		UserObject uObj = uMap.get(userId);
 		return uObj.getHome();
+	}
+	
+	/**
+	 * 
+	 * @param userId
+	 * @return			influence scope of user
+	 */
+	public double getUserScope(String userId){
+		return uMap.get(userId).getScope();
+	}
+	
+	/**
+	 * 
+	 * @param venueId
+	 * @return			influence scope of venue
+	 */
+	public double getVenueScope(String venueId){
+		return vMap.get(venueId).getScope();
 	}
 	
 }
