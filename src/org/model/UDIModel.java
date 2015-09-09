@@ -46,13 +46,7 @@ public class UDIModel {
 		vMap = new HashMap<>();
 		
 		// construct user map
-		Set<String> setOfUsers = new HashSet<String>(friendship.keySet()); // all users. Assume that they are all in friendship network
-		
-		Collection<ArrayList<String>> values = friendship.values();
-		for (ArrayList<String> value : values){
-			for (String v : value)
-				setOfUsers.add(v);
-		}
+		Set<String> setOfUsers = userProfiles.keySet();
 		
 		for (String user : setOfUsers){
 			PointObject home = userProfiles.get(user); // user home

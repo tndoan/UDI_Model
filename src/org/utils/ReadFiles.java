@@ -36,6 +36,8 @@ public class ReadFiles {
 	    		double lng = Double.parseDouble(ll[1]);
 	    		PointObject p = new PointObject(lat, lng);
 	    		result.put(id, p);
+	    	} else {
+	    		result.put(id, null);
 	    	}
 	    }
 	    br.close();
